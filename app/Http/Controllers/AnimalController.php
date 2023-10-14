@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Animal;
 use App\Http\Requests\StoreAnimalRequest;
 use App\Http\Requests\UpdateAnimalRequest;
+use App\Models\AnimalStatus;
 
 class AnimalController extends Controller
 {
@@ -13,7 +14,12 @@ class AnimalController extends Controller
      */
     public function index()
     {
-        $animals = Animal::paginate(10);
+        $animals = Animal::query()
+            ->when(request('search'), function ($query) {
+               return $query->where('name', 'like', '%'. request('search') .'%')
+                    ->orWhere('breed_or_type', 'like', '%'. request('search') .'%');
+            })
+            ->paginate(10);
         return view('animals.index', compact('animals'));
     }
 
@@ -22,7 +28,8 @@ class AnimalController extends Controller
      */
     public function create()
     {
-        return view('animals.create');
+        $status = AnimalStatus::all();
+        return view('animals.create', compact('status'));
     }
 
     /**
@@ -30,9 +37,15 @@ class AnimalController extends Controller
      */
     public function store(StoreAnimalRequest $request)
     {
-        $animal = Animal::create($request->all());
-        return redirect()->route('animals.index')
-            ->with('success', "the animal $animal->name successfully added");
+        $requestData = $request->all();
+
+        if ($requestData['rescue_date'] === null)
+            $requestData['rescue_date'] = now()->format('Y-m-d\TH:i');
+
+
+        $animal = Animal::create($requestData);
+        return redirect()->route('animal.show', $animal->id)
+            ->with('success', "The animal $animal->name successfully added");
     }
 
     /**
@@ -48,7 +61,8 @@ class AnimalController extends Controller
      */
     public function edit(Animal $animal)
     {
-        return view('animals.show', compact('animal'));
+        $status = AnimalStatus::all();
+        return view('animals.edit', compact('animal', 'status'));
     }
 
     /**
@@ -56,8 +70,13 @@ class AnimalController extends Controller
      */
     public function update(UpdateAnimalRequest $request, Animal $animal)
     {
-        $animal->update($request->all());
-         return redirect()->route('animals.show')
+        $requestData = $request->all();
+
+        if ($requestData['rescue_date'] === null)
+            $requestData['rescue_date'] = now()->format('Y-m-d\TH:i');
+
+        $animal->update($requestData);
+         return redirect()->route('animal.show', $animal->id)
             ->with('success', "The $animal->name animal information successfully updated");
     }
 
@@ -66,6 +85,9 @@ class AnimalController extends Controller
      */
     public function destroy(Animal $animal)
     {
-        //
+        $animal->delete();
+
+        return redirect()->route('animal.index')
+            ->with('success', "Animal $animal->name removed correctly");
     }
 }

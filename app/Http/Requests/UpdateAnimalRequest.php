@@ -11,7 +11,7 @@ class UpdateAnimalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,19 @@ class UpdateAnimalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:50',
+            'age' => 'nullable|integer',
+            'gender' => 'nullable|in:F,M',
+            'coat_color' => 'nullable|string|max:50',
+            'weight' => 'nullable|numeric',
+            'height' => 'nullable|numeric',
+            'breed_or_type' => 'nullable|string|max:50',
+            'rescue_history' => 'nullable|string',
+            'rescue_date' => 'nullable|date_format:Y-m-d\TH:i',
+            'health_condition' => 'nullable|string',
+            'rescue_place' => 'required|string',
+            'is_adoptable' => 'boolean',
+            'animal_status_id' => 'nullable|integer',
         ];
     }
 }

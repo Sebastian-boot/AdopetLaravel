@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\AnimalStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -31,24 +32,6 @@ class AnimalFactory extends Factory
         'Great Dane', 'Pug',
     ];
 
-    const ADDRESS = [
-        '123 Calle Ficticia',
-        '456 Avenida Imaginaria',
-        '789 Carrera Inventada',
-        '1010 Camino de la Ilusión',
-        '222 Ruta Irreal',
-        '333 Boulevard de la Imaginación',
-        '444 Plaza de los Sueños',
-        '555 Paseo de la Fantasía',
-        '666 Carretera de la Imaginación',
-        '777 Avenida de los Deseos',
-        '888 Callejón de la Utopía',
-        '999 Avenida de los Suenos',
-        '1001 Callejuela de los Pensamientos',
-        '1111 Pasaje de los Anhelos',
-        '1212 Carretera de los Sueños',
-    ];
-
     /**
      * Define the model's default state.
      *
@@ -56,18 +39,21 @@ class AnimalFactory extends Factory
      */
     public function definition(): array
     {
+        $status = AnimalStatus::all();
+
         return [
             'name' => fake()->name(),
             'age' => fake()-> numberBetween(2, 8),
-            'gender' => fake()->randomElement(['M', 'H']),
-            'coatColor' =>fake()->randomElement(self::COLORS),
+            'gender' => fake()->randomElement(['M', 'F']),
+            'coat_color' =>fake()->randomElement(self::COLORS),
             'weight' => fake()->randomFloat(2, 0.1, 100.0),
             'height' => fake()->randomFloat(2, 0.1, 100.0),
             'breed_or_type' => fake()->randomElement(self::BREED_TYPE),
-            'rescue_story' => fake()->text(100),
+            'rescue_history' => fake()->text(100),
             'rescue_date' => fake()->date(),
             'health_condition' => fake()->text(100),
-            'rescue_place' => fake()->randomElement(self::ADDRESS)
+            'rescue_place' => fake()->city() . "-" . fake()->address(),
+            'animal_status_id' => $status->random()->id,
         ];
     }
 }

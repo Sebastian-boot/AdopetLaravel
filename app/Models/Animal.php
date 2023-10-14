@@ -13,16 +13,16 @@ class Animal extends Model
         'name',
         'age',
         'gender',
-        'coatColor',
+        'coat_color',
         'weight',
         'height',
         'breed_or_type',
-        'rescue_story',
+        'rescue_history',
         'rescue_date',
         'health_condition',
         'rescue_place',
         'is_adoptable',
-        'status'
+        'animal_status_id',
     ];
 
     public function vaccines()
@@ -31,4 +31,7 @@ class Animal extends Model
             ->withPivot('apply_date', 'observations', 'administered_by');
     }
 
+    public function status(){
+        return $this->belongsTo(AnimalStatus::class, 'animal_status_id');
+    }
 }

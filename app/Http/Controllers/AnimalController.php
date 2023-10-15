@@ -72,10 +72,15 @@ class AnimalController extends Controller
      */
     public function update(UpdateAnimalRequest $request, Animal $animal)
     {
+
         $requestData = $request->all();
 
         if ($requestData['rescue_date'] === null)
             $requestData['rescue_date'] = now()->format('Y-m-d\TH:i');
+
+        if (!isset($requestData['is_adoptable']))
+            $requestData['is_adoptable'] = false;
+
 
         $animal->update($requestData);
          return redirect()->route('animal.show', $animal->id)

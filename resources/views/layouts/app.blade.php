@@ -54,6 +54,12 @@
                                 Foundations
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('adoption') ? 'active' : '' }}" href="/adoption">
+                                <i class="fa-solid fa-star"></i>
+                                Adoptions
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

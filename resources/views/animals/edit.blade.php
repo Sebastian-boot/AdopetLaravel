@@ -11,7 +11,7 @@
         </nav>
     </div>
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col">
                 <div class="card shadow-lg p-3 mb-5 bg-body rounded">
                     <div class="card-body">

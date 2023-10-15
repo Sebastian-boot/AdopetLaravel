@@ -37,6 +37,12 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->is('home') ? 'active' : '' }}" href="/home">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->is('animal') ? 'active' : '' }}" href="/animal">
                                 <i class="fa-solid fa-dog"></i>
                                 Animals

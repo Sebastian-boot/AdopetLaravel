@@ -10,19 +10,24 @@ use Illuminate\Database\Seeder;
 class AnimalStatusSeeder extends Seeder
 {
     /**
+     * List of states
+     */
+    const STATUS = [
+        'ABANDONED',
+        'IN_RECOVERY',
+        'IN_RESCUE',
+        'SICK',
+        'POSSIBLE_DEATH',
+        'ADOPTED',
+    ];
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $status = [
-            'ABANDONED',
-            'IN_RECOVERY',
-            'IN_RESCUE',
-            'SICK',
-            'POSSIBLE_DEATH',
-            'ADOPTED',
-        ];
-        foreach ($status as $s) {
+
+        foreach (self::STATUS as $s) {
             AnimalStatus::create([
                 'name' => $s
             ]);

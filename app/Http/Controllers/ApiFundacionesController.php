@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateFoundationsRequest;
 use App\Models\Fundaciones;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,14 @@ class ApiFundacionesController extends Controller
      */
     public function index()
     {
-        $fundaciones = Fundaciones::all();
-        return view('layouts.foundations', ['fundaciones' => $fundaciones]);
+        $fundaciones = Fundaciones::query()
+            ->when(request('search'), function ($query) {
+               return $query->where('name', 'like', '%'. request('search') .'%')
+                    ->orWhere('nit', 'like', '%'. request('search') .'%');
+            })
+            ->paginate(10);
+        return view('layouts.indexFoundations', compact('fundaciones'));
+
     }
 
     /**
@@ -22,7 +29,8 @@ class ApiFundacionesController extends Controller
      */
     public function create()
     {
-        //
+        $status = Fundaciones::all();
+        return view('layouts\createfoundations', compact('status'));
     }
 
     /**
@@ -30,97 +38,52 @@ class ApiFundacionesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|min:5'
-        ]);
 
-        $fundaciones = new Fundaciones;
-        $fundaciones->name = $request->input('name');
-        $fundaciones->introduction = $request->input('introduction');
-        $fundaciones->history = $request->input('history');
-        $fundaciones->email = $request->input('email');
-        $fundaciones->phone = $request->input('phone');
-        $fundaciones->website = $request->input('website');
-        $fundaciones->nit = $request->input('nit');
-        $fundaciones->employeeCount = $request->input('employeeCount');
-        $fundaciones->FoundationFoundingDate = $request->input('FoundationFoundingDate');
-        $fundaciones->animalsAssitedCount = $request->input('animalsAssitedCount');
-        $fundaciones->currentAnimalAssitedCount = $request->input('currentAnimalAssitedCount');
-        $fundaciones->limitAnimalAssitedCount = $request->input('limitAnimalAssitedCount');
-        $fundaciones->foundationrating = $request->input('foundationrating');
-
-        try {
-            $fundaciones->save();
-        } catch (\Exception $e) {
-            // Log the exception or display the error message for debugging
-            dd($e->getMessage());
-        } finally{
-            return redirect()->route('fundacionesView')->with('success','Fundación pendiente de por validar');
-        }
-
-
-        
+        $requestData = $request->all();
+        $fundacion = Fundaciones::create($requestData);
+        return redirect()->route('fundaciones.show', $fundacion->id)
+            ->with('success', "The foundation $fundacion->name successfully added");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Fundaciones $fundaciones)
     {
-        $fundacion = Fundaciones::find($id);
-
-        if (!$fundacion) {
-            return abort(404); // Or handle the case where the record is not found.
-        }
-
-        return view('fundaciones.show', ['fundacion' => $fundacion]);
+        return view('layouts.showFoundations', compact('fundaciones'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Fundaciones $fundacione)
     {
-        //
+        
+        return view('layouts.editFoundations', compact('fundacione'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateFoundationsRequest $request, Fundaciones $fundacione)
     {
-        $fundacion = Fundaciones::find($id);
+        $requestData = $request->all();
 
-        if (!$fundacion) {
-            return abort(404); // Or handle the case where the record is not found.
-        }
+        $fundacione->update($requestData);
 
-        // Update fields with data from the request
-        $fundacion->name = $request->name;
-        $fundacion->introduction = $request->introduction;
-        $fundacion->history = $request->history;
-        $fundacion->email = $request->email;
-        $fundacion->phone = $request->phone;
-        $fundacion->website = $request->website;
-        $fundacion->nit = $request->nit;
-        $fundacion->employeeCount = $request->employeeCount;
-        $fundacion->FoundationFoundingDate = $request->FoundationFoundingDate;
-        $fundacion->animalsAssitedCount = $request->animalsAssitedCount;
-        $fundacion->currentAnimalAssitedCount = $request->currentAnimalAssitedCount;
-        $fundacion->limitAnimalAssitedCount = $request->limitAnimalAssitedCount;
-        $fundacion->foundationrating = $request->foundationrating;
 
-        // Save the updated record
-        $fundacion->save();
-        
-        return view('fundacionesView', ['fundacion' => $fundacion]);
+         return redirect()->route('fundaciones.show', $fundacione->id)
+            ->with('success', "The $fundacione->name foudantion information successfully updated");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Fundaciones $fundaciones)
     {
-        //
+        $fundaciones->delete();
+
+        return redirect()->route('layout.indexFoundations')
+            ->with('success', "Animal $fundaciones->name removed correctly");
     }
 }

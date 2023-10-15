@@ -16,7 +16,10 @@ class DatabaseSeeder extends Seeder
         $this->call(AnimalStatusSeeder::class);
         $this->call(AnimalSeeder::class);
         $this->call(FundacionesSeeder::class);
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 0041900aa34397091c49c53069881c9a3af431ce
     }
 }

@@ -135,14 +135,27 @@
                         <p><strong>Phone:</strong> {{ $fundacion->phone }}</p>
                         <p><strong>Introduction:</strong> {{ $fundacion->introduction }}</p>
                         <p><strong>History:</strong> {{ $fundacion->history }}</p>
+                        <p><strong>Nit:</strong> {{ $fundacion->nit }}</p>
+                        <p><strong>Phone:</strong> {{ $fundacion->phone }}</p>
+                        <p><strong>Website:</strong> {{ $fundacion->website }}</p>
+                        <p><strong>Fecha de fundación:</strong> {{ $fundacion->FoundationFoundingDate }}</p>
+                        <p><strong>Numero de empleados:</strong> {{ $fundacion->employeeCount }}</p>
+                        <p><strong>Numeros de animales asistidos:</strong> {{ $fundacion->animalsAssitedCount }}</p>
+                        <p><strong>Limite de animales:</strong> {{ $fundacion->limitAnimalAssitedCount }}</p>
+                        <p><strong>Calificacion:</strong> {{ $fundacion->foundationrating }}</p>
+
+
                         <!-- Add more fields as needed -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editFundacionModal">Edit</button>
                     </div>
                 </div>
             </div>
         </div>
+
+
 
         
 

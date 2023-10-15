@@ -14,6 +14,6 @@ class FundacionesSeeder extends Seeder
      */
     public function run(): void
     {
-        Fundaciones::factory()->count(50)->create();
+        Fundaciones::factory()->count(15)->create();
     }
 }

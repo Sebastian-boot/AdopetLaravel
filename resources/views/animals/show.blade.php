@@ -99,15 +99,13 @@
                                                 <strong class="text-primary">It was applied:</strong>
                                                 {{ \Carbon\Carbon::parse($vaccine->pivot->apply_date)->diffForHumans() }}
                                             </small>
-                                            <form action="{{ route('animal.destroyVaccine', ['animal' => $animal->id, 'vaccine' => $vaccine->id]) }}"
-                                                  method="POST" class="position-absolute bottom-0 end-0 m-2">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger
-                                                        btn-sm ">
-                                                    <i class="fa-regular fa-trash-can"></i>
-                                                </button>
-                                            </form>
+                                            <button class="btn btn-outline-danger btn-sm position-absolute bottom-0 end-0 m-2" type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#vaccine-remove-modal"
+                                                    data-animal-id="{{ $animal->id }}"
+                                                    data-vaccine-id="{{ $vaccine->id }}">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                            </button>
                                         </div>
                                         <p class="mb-1">
                                             <strong>Type: </strong>
@@ -207,7 +205,7 @@
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Modal Add Vaccine -->
         <div class="modal fade" id="vaccine-add-modal" tabindex="-1" data-bs-backdrop="static"
              aria-labelledby="vaccine-modal-label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -289,18 +287,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Remove Vaccine -->
+        <div class="modal fade" id="vaccine-remove-modal" tabindex="-1" aria-labelledby="vaccine-remove-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered ">
+                <div class="modal-content">
+                    <div class="modal-body p-5">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-regular fa-circle-question text-warning fs-3 me-2"></i>
+                            <p class="mb-0 fw-lighter">Are you sure you want to delete this vaccine record for the animal?</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer p-2 border-top-0">
+                        <form method="POST" id="vaccine-remove-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="btn btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa-regular fa-trash-can"></i>
+                                Yes, Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     @if ($errors->any())
         @push('scripts')
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const formAddVaccine = document.getElementById('vaccine-add-form');
-                    const modalElement = document.getElementById('vaccine-add-modal');
+                    const modalElementAddVaccine = document.getElementById('vaccine-add-modal');
 
-                    const modal = new bootstrap.Modal('#vaccine-add-modal')
-                    modal.show()
+                    const modalAddVaccine = new bootstrap.Modal('#vaccine-add-modal')
+                    modalAddVaccine.show()
 
-                    modalElement.addEventListener('hide.bs.modal', () => {
+                    modalElementAddVaccine.addEventListener('hide.bs.modal', () => {
                         const errorSpans = formAddVaccine.querySelectorAll('.text-danger');
 
                         errorSpans.forEach(span => {
@@ -313,4 +336,23 @@
             </script>
         @endpush
     @endif
+    @push('scripts')
+        <script>
+            const modalRemoveVaccine = document.getElementById('vaccine-remove-modal');
+            const formRemoveVaccine = document.getElementById('vaccine-remove-form');
+            modalRemoveVaccine.addEventListener('shown.bs.modal', (e) => {
+                var button = e.relatedTarget
+                var animalId = button.getAttribute("data-animal-id");
+                var vaccineId = button.getAttribute("data-vaccine-id");
+
+                var route = "{{ route('animal.destroyVaccine', ['animal' => ':animalId', 'vaccine' => ':vaccineId']) }}";
+                route = route.replace(':animalId', animalId);
+                route = route.replace(':vaccineId', vaccineId);
+                formRemoveVaccine.action = route;
+            })
+            modalRemoveVaccine.addEventListener('hide.bs.modal', () => {
+                formRemoveVaccine.removeAttribute('action');
+            })
+        </script>
+    @endpush
 @endsection

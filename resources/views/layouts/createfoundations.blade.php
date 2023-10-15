@@ -1,6 +1,6 @@
-@extends('Fundaciones')
+@extends('layouts.app')
 
-@section('contentFoundations')
+@section('content')
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -109,7 +109,7 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label for="fundaciones-employee-count" class="form-label">Employee Count</label>
                                 <input
@@ -149,7 +149,7 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label for="fundaciones-foundation-rating" class="form-label">Foundation Rating</label>
                                 <input

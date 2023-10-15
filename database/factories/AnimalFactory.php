@@ -54,6 +54,7 @@ class AnimalFactory extends Factory
             'health_condition' => fake()->text(100),
             'rescue_place' => fake()->city() . "-" . fake()->address(),
             'animal_status_id' => $status->random()->id,
+            'is_adoptable' => fake()->randomElement([true, false]),
         ];
     }
 }

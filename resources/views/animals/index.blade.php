@@ -36,7 +36,7 @@
                             <div class="col-4 offset-8 text-end">
                                 <form method="GET">
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" value="{{ request('search') }}" placeholder="search..." name="search">
+                                        <input type="text" class="form-control" value="{{ request('search') }}" placeholder="Search..." name="search">
                                     </div>
                                 </form>
                             </div>

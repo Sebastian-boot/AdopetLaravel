@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use App\Http\Requests\StoreAnimalRequest;
+use App\Http\Requests\StoreAnimalVaccineRequest;
 use App\Http\Requests\UpdateAnimalRequest;
 use App\Models\AnimalStatus;
+use App\Models\Vaccine;
 
 class AnimalController extends Controller
 {
@@ -70,10 +72,15 @@ class AnimalController extends Controller
      */
     public function update(UpdateAnimalRequest $request, Animal $animal)
     {
+
         $requestData = $request->all();
 
         if ($requestData['rescue_date'] === null)
             $requestData['rescue_date'] = now()->format('Y-m-d\TH:i');
+
+        if (!isset($requestData['is_adoptable']))
+            $requestData['is_adoptable'] = false;
+
 
         $animal->update($requestData);
          return redirect()->route('animal.show', $animal->id)
@@ -90,4 +97,32 @@ class AnimalController extends Controller
         return redirect()->route('animal.index')
             ->with('success', "Animal $animal->name removed correctly");
     }
+
+    /**
+     * Add vaccines to an animal
+     */
+    public function storeAnimalVaccine(StoreAnimalVaccineRequest $request, Animal $animal){
+        $vaccine = Vaccine::create($request->all());
+        $animal->vaccines()->attach($vaccine->id, [
+            'observations' => $request->observations,
+            'administered_by' => $request->administered_by
+        ]);
+
+        return redirect()->route('animal.show', $animal->id)
+            ->with('success',
+            "The $vaccine->name vaccine for the $animal->name animal was registered correctly");
+    }
+
+    /**
+     * remove vaccines from the animal
+     */
+    public function destroyAnimalVaccine(Animal $animal, Vaccine $vaccine){
+
+        $animal->vaccines()->detach($vaccine->id);
+
+        return redirect()->route('animal.show', $animal->id)
+            ->with('success',
+            "the $vaccine->name vaccine was correctly removed from $animal->name vaccine registry");
+    }
+
 }

@@ -1,6 +1,6 @@
-@extends('Fundaciones')
+@extends('layouts.app')
 
-@section('contentFoundations')
+@section('content')
     <div class="container-fluid">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

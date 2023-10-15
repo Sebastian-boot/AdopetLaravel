@@ -84,7 +84,7 @@
                             <div class="col-md-4">
                                 <label for="animal-weight" class="form-label">Weight</label>
                                 <input
-                                       type="text" class="form-control" name="weight" id="animal-weight"
+                                       type="number" class="form-control" name="weight" id="animal-weight"
                                        value="{{ old('weight', $animal->weight) }}">
                                 @error('weight')
                                     <span class="text-danger">{{ $message }}</span>
@@ -93,7 +93,7 @@
                             <div class="col-md-4">
                                 <label for="animal-height" class="form-label">Height</label>
                                 <input
-                                       type="text" class="form-control" name="height" id="animal-height"
+                                       type="number" class="form-control" name="height" id="animal-height"
                                        value="{{ old('weight', $animal->weight) }}">
                                 @error('height')
                                     <span class="text-danger">{{ $message }}</span>

@@ -48,9 +48,9 @@ class ApiFundacionesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Fundaciones $fundaciones)
+    public function show(Fundaciones $fundacione)
     {
-        return view('layouts.showFoundations', compact('fundaciones'));
+        return view('layouts.showFoundations', compact('fundacione'));
     }
 
     /**
@@ -79,11 +79,11 @@ class ApiFundacionesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Fundaciones $fundaciones)
+    public function destroy(Fundaciones $fundacione)
     {
-        $fundaciones->delete();
+        $fundacione->delete();
 
-        return redirect()->route('layout.indexFoundations')
-            ->with('success', "Animal $fundaciones->name removed correctly");
+        return redirect()->route('fundaciones.index')
+            ->with('success', "Fundacion $fundacione->name removed correctly");
     }
 }

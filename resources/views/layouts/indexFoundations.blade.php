@@ -69,7 +69,10 @@
                                                        href="{{ route('fundaciones.edit', $fundacion->id) }}">
                                                         <i class="fa-regular fa-pen-to-square"></i>
                                                     </a>
-                                                    <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#animal-remove-modal">
+                                                    <button class="btn btn-outline-danger btn-sm" type="button"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#animal-remove-modal"
+                                                            data-id="{{ $fundacion->id }}">
                                                         <i class="fa-regular fa-trash-can"></i>
                                                     </button>
                                                 </div>
@@ -88,25 +91,47 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal" id="animal-remove-modal" tabindex="-1" aria-labelledby="animal-modal-label" aria-hidden="true">
+        <div class="modal fade" id="animal-remove-modal" tabindex="-1" aria-labelledby="animal-modal-label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered ">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-danger fw-bold" id="animal-modal-label">Remove Foundation</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-body p-5">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-regular fa-circle-question text-warning fs-3 me-2"></i>
+                            <p class="mb-0 fw-lighter">Are you sure you want to eliminate the Foundation?</p>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <p class="fs-4">Are you sure you want to eliminate the animal?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger">
-                            <i class="fa-regular fa-trash-can"></i>
-                            Yes, Delete
-                        </button>
+                    <div class="modal-footer p-2 border-top-0">
+                        <form method="POST" id="animal-remove-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" class="btn btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fa-regular fa-trash-can"></i>
+                                Yes, Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        const modal = document.getElementById('animal-remove-modal');
+        const formRemoveAnimal = document.getElementById('animal-remove-form');
+        modal.addEventListener('shown.bs.modal', (e) => {
+            var button = e.relatedTarget
+            var id = button.getAttribute("data-id");
+
+            var route = "{{ route('fundaciones.destroy', ':id') }}";
+            route = route.replace(':id', id);
+            console.log(id);
+            formRemoveAnimal.action = route;
+        })
+        modal.addEventListener('hide.bs.modal', () => {
+            formRemoveAnimal.removeAttribute('action');
+        })
+    </script>
+@endpush

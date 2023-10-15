@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('animal_id');
             $table->unsignedBigInteger('vaccine_id');
-            $table->dateTime('apply_date')->default(now());
+            $table->dateTime('apply_date')->default(now()->format('Y-m-d\TH:i'));
             $table->string('observations')->nullable();
             $table->string('administered_by', 30);
             $table->timestamps();

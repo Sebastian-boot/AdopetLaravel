@@ -26,4 +26,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => 'auth'], function(){
     Route::resource('animal', AnimalController::class);
     Route::resource('fundaciones', App\Http\Controllers\ApiFundacionesController::class);
+    Route::post('animal/{animal}/vaccine/', [App\Http\Controllers\AnimalController::class, 'storeAnimalVaccine'])
+        ->name('animal.storeVaccine');
+    Route::delete('animal/{animal}/vaccine/{vaccine}', [App\Http\Controllers\AnimalController::class, 'destroyAnimalVaccine'])
+        ->name('animal.destroyVaccine');
 });

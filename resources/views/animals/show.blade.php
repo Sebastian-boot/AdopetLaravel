@@ -77,12 +77,19 @@
                                     <span class="text-primary">{{ $animal->name }}</span>
                                 </h6>
                             </div>
+                            <div class="col text-end">
+                                <button type="button" class="btn btn-outline-primary"
+                                        data-bs-toggle="modal" data-bs-target="#vaccine-add-modal">
+                                    <i class="fa-solid fa-plus"></i>
+                                    Add New Vaccine
+                                </button>
+                            </div>
                         </div>
                         <hr>
                         <div class="row g-3">
                             <div class="list-group">
                                 @forelse ($animal->vaccines as $vaccine)
-                                    <a href="#" class="list-group-item list-group-item-action">
+                                    <li class="list-group-item">
                                         <div class="d-flex w-100 justify-content-between">
                                             <h5 class="mb-1">
                                                 <strong>Name:</strong>
@@ -92,6 +99,15 @@
                                                 <strong class="text-primary">It was applied:</strong>
                                                 {{ \Carbon\Carbon::parse($vaccine->pivot->apply_date)->diffForHumans() }}
                                             </small>
+                                            <form action="{{ route('animal.destroyVaccine', ['animal' => $animal->id, 'vaccine' => $vaccine->id]) }}"
+                                                  method="POST" class="position-absolute bottom-0 end-0 m-2">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger
+                                                        btn-sm ">
+                                                    <i class="fa-regular fa-trash-can"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                         <p class="mb-1">
                                             <strong>Type: </strong>
@@ -106,12 +122,11 @@
                                             <strong>Observations:</strong>
                                             {{ $vaccine->pivot->observations }}
                                         </small>
-                                    </a>
+                                    </li>
                                 @empty
                                     <span class="text-warning">Vaccines have not yet been registered for the {{ $animal->name }} animal...</span>
                                 @endforelse
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -192,5 +207,110 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="vaccine-add-modal" tabindex="-1" data-bs-backdrop="static"
+             aria-labelledby="vaccine-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="vaccine-modal-label">Add New Vaccine</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="{{ route('animal.storeVaccine', $animal->id) }}" id="vaccine-add-form">
+                        @csrf
+                        <div class="modal-body row g-3">
+                            <div class="col-md-6 ">
+                                <label for="vaccine-name" class="form-label">Name</label>
+                                <input
+                                       type="text" class="form-control" name="name" id="vaccine-name"
+                                       value="{{ old('name') }}">
+                                @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="vaccine-type" class="form-label">Type</label>
+                                <input
+                                       type="text" class="form-control" name="type" id="vaccine-type"
+                                       value="{{ old('type') }}">
+                                @error('type')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label for="vaccine-price" class="form-label">Price</label>
+                                <input
+                                       type="number" class="form-control" name="price" id="vaccine-price"
+                                       value="{{ old('price') }}">
+                                @error('price')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vaccine-administered-by" class="form-label">Administered By</label>
+                                <input
+                                       type="text" class="form-control" name="administered_by" id="vaccine-administered-by"
+                                       value="{{ old('administered_by') }}">
+                                @error('administered_by')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vaccine-apply-date" class="form-label">Apply Date</label>
+                                <input
+                                       type="datetime-local" class="form-control"
+                                       name="apply_date" id="vaccine-apply-date"
+                                       value="{{ old('apply_date') }}">
+                                @error('apply_date')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="observations"
+                                              id="vaccine-observations" style="height: 100px">
+                                        {{ old('observations') }}
+                                    </textarea>
+                                    <label for="vaccine-observations">Observations</label>
+                                    @error('observations')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer p-2 border-top-0">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-plus"></i>
+                                Add
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+    @if ($errors->any())
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const formAddVaccine = document.getElementById('vaccine-add-form');
+                    const modalElement = document.getElementById('vaccine-add-modal');
+
+                    const modal = new bootstrap.Modal('#vaccine-add-modal')
+                    modal.show()
+
+                    modalElement.addEventListener('hide.bs.modal', () => {
+                        const errorSpans = formAddVaccine.querySelectorAll('.text-danger');
+
+                        errorSpans.forEach(span => {
+                            span.style.display = 'none';
+                        });
+
+                        formAddVaccine.reset();
+                    });
+                })
+            </script>
+        @endpush
+    @endif
 @endsection
